@@ -1,9 +1,65 @@
 #include <windows.h>
-
+#include <stdlib.h>
+#include <stdio.h>
 /* This is where all the input to the window goes to */
+HWND textfield,button1,button2,button3,button4,TextBox,TextBox2;
 LRESULT CALLBACK WndProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
 	switch(Message) {
+		case WM_CREATE:
+		textfield = CreateWindow("STATIC","Please input two numbers",WS_VISIBLE | WS_CHILD | WS_BORDER , 20,20,200,25,hwnd,NULL,NULL,NULL);
+		button1 = CreateWindow("BUTTON","+",WS_VISIBLE | WS_CHILD | WS_BORDER,30,120,30,25,hwnd,(HMENU) 1,NULL,NULL);
+		button2 = CreateWindow("BUTTON","-",WS_VISIBLE | WS_CHILD | WS_BORDER,80,120,30,25,hwnd,(HMENU) 2,NULL,NULL);
+		button3 = CreateWindow("BUTTON","*",WS_VISIBLE | WS_CHILD | WS_BORDER,130,120,30,25,hwnd,(HMENU) 3,NULL,NULL);
+		button4 = CreateWindow("BUTTON","/",WS_VISIBLE | WS_CHILD | WS_BORDER,180,120,30,25,hwnd,(HMENU) 4,NULL,NULL);
+		TextBox = CreateWindow("EDIT","",WS_BORDER | WS_CHILD | WS_VISIBLE ,50,50,150,20,hwnd,NULL,NULL,NULL);
+		TextBox2 = CreateWindow("EDIT","",WS_BORDER | WS_CHILD | WS_VISIBLE ,50,75,150,20,hwnd,NULL,NULL,NULL);
 		
+
+
+		break;
+		
+		case WM_COMMAND:
+		
+		char buf1[50], buf2[50], resultStr[100];
+		double a, b, result;
+		GetWindowText(TextBox, buf1, 50);
+		GetWindowText(TextBox2, buf2, 50);
+
+		a = atof(buf1);
+		b = atof(buf2);
+			switch(LOWORD(wParam)){
+			case 1:
+            result = a + b;
+			sprintf(resultStr, "%f", result);
+			MessageBox(hwnd, resultStr, "Result", MB_OK);
+            break;
+
+        	case 2: 
+            result = a - b;
+			sprintf(resultStr, "%f", result);
+			MessageBox(hwnd, resultStr, "Result", MB_OK);
+            break;
+
+       	 	case 3: 
+            result = a * b;
+			sprintf(resultStr, "%f", result);
+			MessageBox(hwnd, resultStr, "Result", MB_OK);
+            break;
+
+        	case 4: 
+            if(b == 0) {
+                MessageBox(hwnd, "Cannot divide by zero", "Error", MB_OK);
+                return 0;
+            }
+            result = a / b;
+			sprintf(resultStr, "%f", result);
+			MessageBox(hwnd, resultStr, "Result", MB_OK);
+            break;
+
+			}
+			
+		
+			break;
 		/* Upon destruction, tell the main thread to stop */
 		case WM_DESTROY: {
 			PostQuitMessage(0);
@@ -31,7 +87,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	wc.hCursor	 = LoadCursor(NULL, IDC_ARROW);
 	
 	/* White, COLOR_WINDOW is just a #define for a system color, try Ctrl+Clicking it */
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
+	wc.hbrBackground = CreateSolidBrush(RGB(256,55,25));
 	wc.lpszClassName = "WindowClass";
 	wc.hIcon	 = LoadIcon(NULL, IDI_APPLICATION); /* Load a standard icon */
 	wc.hIconSm	 = LoadIcon(NULL, IDI_APPLICATION); /* use the name "A" to use the project icon */
@@ -41,11 +97,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 0;
 	}
 
-	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE,"WindowClass","Caption",WS_VISIBLE|WS_OVERLAPPEDWINDOW,
+	hwnd = CreateWindowEx(WS_EX_CLIENTEDGE,"WindowClass","My Calculator",WS_VISIBLE|WS_SYSMENU,
 		CW_USEDEFAULT, /* x */
 		CW_USEDEFAULT, /* y */
-		640, /* width */
-		480, /* height */
+		250, /* width */
+		200, /* height */
 		NULL,NULL,hInstance,NULL);
 
 	if(hwnd == NULL) {
